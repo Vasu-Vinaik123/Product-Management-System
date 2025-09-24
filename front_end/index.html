@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.95);
+            color: #4a5568;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: 2px solid transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .tab-btn:hover.active {
+            background: linear-gradient(135deg, #5a6fd8, #6b42a0);
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6b42a0);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            box-shadow: 0 8px 25px rgba(229, 62, 62, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #eab308, #ca8a04);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .card p {
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #38a169;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border-left: 4px solid #38a169;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border-left: 4px solid #e53e3e;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Product Management System</h1>
+            <p class="subtitle">Manage your products and sellers with ease</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('login-tab')">Login</button>
+            <button class="tab-btn" onclick="showTab('products')" id="products-tab" style="display:none;">Products</button>
+            <button class="tab-btn" onclick="showTab('add-product')" id="add-product-tab" style="display:none;">Add Product</button>
+            <button class="tab-btn" onclick="showTab('sellers')" id="sellers-tab" style="display:none;">Sellers</button>
+            <button class="tab-btn" onclick="showTab('add-seller')" id="add-seller-tab">Add Seller</button>
+            <button class="tab-btn" onclick="logout()" id="logout-btn" style="display:none;">Logout</button>
+        </div>
+
+        <div id="login-tab" class="tab-content active">
+            <h2>Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <div id="products" class="tab-content">
+            <h2>All Products</h2>
+            <button onclick="fetchProducts()" style="margin-bottom: 20px;">Refresh Products</button>
+            <div class="loading" id="products-loading">
+                <div class="spinner"></div>
+                <p>Loading products...</p>
+            </div>
+            <div id="products-list"></div>
+        </div>
+
+        <div id="add-product" class="tab-content">
+            <h2>Add New Product</h2>
+            <form id="product-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-name">Product Name</label>
+                        <input type="text" id="product-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-price">Price ($)</label>
+                        <input type="number" id="product-price" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="product-description">Description</label>
+                    <textarea id="product-description" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-seller-id">Seller ID</label>
+                    <input type="number" id="product-seller-id" required>
+                </div>
+                        
+                <button type="submit">Add Product</button>
+            </form>
+        </div>
+
+        <div id="sellers" class="tab-content">
+            <h2>All Sellers</h2>
+            <button onclick="fetchSellers()" style="margin-bottom: 20px;">Refresh Sellers</button>
+            <div class="loading" id="sellers-loading">
+                <div class="spinner"></div>
+                <p>Loading sellers...</p>
+            </div>
+            <div id="sellers-list"></div>
+        </div>
+
+        <div id="add-seller" class="tab-content">
+            <h2>Register New Seller</h2>
+            <form id="seller-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="seller-username">Username</label>
+                        <input type="text" id="seller-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="seller-email">Email</label>
+                        <input type="email" id="seller-email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="seller-password">Password</label>
+                    <input type="password" id="seller-password" required>
+                </div>
+                <button type="submit">Register Seller</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000';
+        let accessToken = null;
+
+        // Check for stored token on load
+        if (typeof(Storage) !== "undefined") {
+            accessToken = sessionStorage.getItem('access_token');
+        }
+
+        // Function to show/hide tabs and nav buttons based on login status
+        function updateUI() {
+            if (accessToken) {
+                document.getElementById('products-tab').style.display = 'block';
+                document.getElementById('add-product-tab').style.display = 'block';
+                document.getElementById('sellers-tab').style.display = 'block';
+                document.getElementById('logout-btn').style.display = 'block';
+                
+                // Hide login tab button
+                document.querySelector('[onclick="showTab(\'login-tab\')"]').style.display = 'none';
+                
+                // Switch to products tab
+                showTab('products');
+                
+            } else {
+                document.getElementById('products-tab').style.display = 'none';
+                document.getElementById('add-product-tab').style.display = 'none';
+                document.getElementById('sellers-tab').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'none';
+                
+                // Show login tab button
+                document.querySelector('[onclick="showTab(\'login-tab\')"]').style.display = 'block';
+                
+                // Switch to login tab
+                showTab('login-tab');
+            }
+        }
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            // Load data if needed
+            if (tabName === 'products') {
+                fetchProducts();
+            } else if (tabName === 'sellers') {
+                fetchSellers();
+            }
+        }
+
+        // Show alert messages
+        function showAlert(message, type = 'success') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            const activeTab = document.querySelector('.tab-content.active');
+            activeTab.insertBefore(alertDiv, activeTab.firstChild);
+            
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
+
+        // Login function
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+            
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Login failed');
+                }
+                
+                const result = await response.json();
+                accessToken = result.access_token;
+                
+                // Store token
+                if (typeof(Storage) !== "undefined") {
+                    sessionStorage.setItem('access_token', accessToken);
+                }
+                
+                showAlert('Login successful! Welcome!');
+                updateUI();
+                
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Logout function
+        function logout() {
+            accessToken = null;
+            if (typeof(Storage) !== "undefined") {
+                sessionStorage.removeItem('access_token');
+            }
+            showAlert('Logged out successfully!');
+            updateUI();
+        }
+
+        // Fetch and display products - FIXED ENDPOINT
+        async function fetchProducts() {
+            const loadingDiv = document.getElementById('products-loading');
+            const productsDiv = document.getElementById('products-list');
+            
+            loadingDiv.style.display = 'block';
+            productsDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch(`${API_BASE}/product/`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showAlert('You are not authorized. Please log in.', 'error');
+                        logout();
+                        return;
+                    }
+                    throw new Error('Failed to fetch products');
+                }
+                
+                const products = await response.json();
+                loadingDiv.style.display = 'none';
+                
+                if (products.length === 0) {
+                    productsDiv.innerHTML = '<p>No products found. Add your first product!</p>';
+                    return;
+                }
+                
+                productsDiv.innerHTML = products.map(product => `
+                    <div class="card">
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <p class="price">$${product.price}</p>
+                        <p><small>Seller ID: ${product.seller_id}</small></p>
+                        <button onclick="editProduct(${product.id})" class="btn-warning">Edit</button>
+                        <button onclick="deleteProduct(${product.id})" class="btn-danger">Delete</button>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                loadingDiv.style.display = 'none';
+                showAlert('Error fetching products: ' + error.message, 'error');
+            }
+        }
+
+        // Fetch and display sellers
+        async function fetchSellers() {
+            const loadingDiv = document.getElementById('sellers-loading');
+            const sellersDiv = document.getElementById('sellers-list');
+
+            loadingDiv.style.display = 'block';
+            sellersDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE}/seller`);
+                if (!response.ok) throw new Error('Failed to fetch sellers');
+
+                const sellers = await response.json();
+                loadingDiv.style.display = 'none';
+
+                if (sellers.length === 0) {
+                    sellersDiv.innerHTML = '<p>No sellers found. Add a new seller!</p>';
+                    return;
+                }
+                
+                sellersDiv.innerHTML = sellers.map(seller => `
+                    <div class="card">
+                        <h3>${seller.username}</h3>
+                        <p>Email: ${seller.email}</p>
+                        <p><strong>ID:</strong> ${seller.id}</p>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                loadingDiv.style.display = 'none';
+                showAlert('Error fetching sellers: ' + error.message, 'error');
+            }
+        }
+
+        // Add new product - FIXED ENDPOINT
+        document.getElementById('product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const productData = {
+                name: document.getElementById('product-name').value,
+                description: document.getElementById('product-description').value,
+                price: parseFloat(document.getElementById('product-price').value),
+                seller_id: parseInt(document.getElementById('product-seller-id').value)
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/product/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify(productData)
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showAlert('You are not authorized. Please log in.', 'error');
+                        logout();
+                        return;
+                    }
+                    const errorText = await response.text();
+                    throw new Error(`Failed to add product: ${errorText}`);
+                }
+                
+                showAlert('Product added successfully!');
+                document.getElementById('product-form').reset();
+                fetchProducts();
+                
+            } catch (error) {
+                showAlert('Error adding product: ' + error.message, 'error');
+            }
+        });
+
+        // Delete product - FIXED ENDPOINT
+        async function deleteProduct(id) {
+            if (!confirm('Are you sure you want to delete this product?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/product/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showAlert('You are not authorized. Please log in.', 'error');
+                        logout();
+                        return;
+                    }
+                    throw new Error('Failed to delete product');
+                }
+                
+                showAlert('Product deleted successfully!');
+                fetchProducts();
+                
+            } catch (error) {
+                showAlert('Error deleting product: ' + error.message, 'error');
+            }
+        }
+
+        // Edit product
+        function editProduct(id) {
+            fetchProductById(id).then(product => {
+                if (product) {
+                    showEditModal(product);
+                }
+            });
+        }
+
+        // Fetch single product by ID - FIXED ENDPOINT
+        async function fetchProductById(id) {
+            try {
+                const response = await fetch(`${API_BASE}/product/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showAlert('You are not authorized. Please log in.', 'error');
+                        logout();
+                        return null;
+                    }
+                    throw new Error('Failed to fetch product');
+                }
+                return await response.json();
+            } catch (error) {
+                showAlert('Error fetching product: ' + error.message, 'error');
+                return null;
+            }
+        }
+
+        // Show edit modal
+        function showEditModal(product) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.5); display: flex; align-items: center;
+                justify-content: center; z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px;">
+                    <h3>Edit Product</h3>
+                    <form id="edit-form">
+                        <input type="hidden" id="edit-seller-id" value="${product.seller_id}">
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px;">Product Name</label>
+                            <input type="text" id="edit-name" value="${product.name}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px;">Price</label>
+                            <input type="number" id="edit-price" value="${product.price}" step="0.01" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px;">Description</label>
+                            <textarea id="edit-description" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">${product.description}</textarea>
+                        </div>
+                        <button type="submit" style="margin-right: 10px;">Update Product</button>
+                        <button type="button" onclick="this.closest('div').parentElement.remove()">Cancel</button>
+                    </form>
+                </div>
+            `;
+            
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            // Handle form submission
+            document.getElementById('edit-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const updatedProduct = {
+                    name: document.getElementById('edit-name').value,
+                    description: document.getElementById('edit-description').value,
+                    price: parseFloat(document.getElementById('edit-price').value),
+                    seller_id: parseInt(document.getElementById('edit-seller-id').value)
+                };
+                
+                updateProduct(product.id, updatedProduct);
+                modal.remove();
+            });
+        }
+
+        // Update product - FIXED ENDPOINT AND DEBUGGING
+        async function updateProduct(id, productData) {
+            try {
+                console.log('Updating product ID:', id);
+                console.log('Product data:', productData);
+                
+                const response = await fetch(`${API_BASE}/product/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify(productData)
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showAlert('You are not authorized. Please log in.', 'error');
+                        logout();
+                        return;
+                    }
+                    const errorText = await response.text();
+                    console.log('Error response:', errorText);
+                    throw new Error(`Failed to update product: ${response.status} - ${errorText}`);
+                }
+                
+                const result = await response.json();
+                console.log('Update result:', result);
+                
+                showAlert('Product updated successfully!');
+                fetchProducts();
+                
+            } catch (error) {
+                console.error('Update error:', error);
+                showAlert('Error updating product: ' + error.message, 'error');
+            }
+        }
+
+        // Register new seller
+        document.getElementById('seller-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const sellerData = {
+                username: document.getElementById('seller-username').value,
+                email: document.getElementById('seller-email').value,
+                password: document.getElementById('seller-password').value
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/seller`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sellerData)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Failed to register seller: ${errorText}`);
+                }
+                
+                showAlert('Seller registered successfully!');
+                document.getElementById('seller-form').reset();
+                
+            } catch (error) {
+                showAlert('Error registering seller: ' + error.message, 'error');
+            }
+        });
+
+        // Load page and check for existing token
+        window.addEventListener('load', () => {
+            updateUI();
+        });
+    </script>
+</body>
+</html>
