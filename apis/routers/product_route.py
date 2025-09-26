@@ -12,7 +12,7 @@ router = APIRouter(tags=['Products'], prefix="/product")
 
 
 
-@router.post('/', response_model= schemas.ShowProduct, status_code=status.HTTP_201_CREATED)
+@router.post('', response_model= schemas.ShowProduct, status_code=status.HTTP_201_CREATED)
 def add_product(product: schemas.Product , db: Session = Depends(get_db)):
   product = models.Product(name= product.name, description=product.description, price=product.price, seller_id=product.seller_id)
   db.add(product)
@@ -21,7 +21,7 @@ def add_product(product: schemas.Product , db: Session = Depends(get_db)):
   return product
 
 
-@router.get('/', response_model=List[schemas.ShowProduct])
+@router.get('', response_model=List[schemas.ShowProduct])
 def fetch_all(db:Session = Depends(get_db), current_user:schemas.Seller = Depends(get_user)):
   product = db.query(models.Product).all()
   return product
