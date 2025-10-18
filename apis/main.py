@@ -1,15 +1,14 @@
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from apis import models
 from apis.db import engine
 from fastapi.middleware.cors import CORSMiddleware
-from . routers import product_route, seller_route, signin
-from fastapi.responses import HTMLResponse
-
+from .routers import product_route, seller_route, signin
 
 app = FastAPI(
-  title="Products",
-  description="Find details for the products",
-  
+    title="Products",
+    description="Find details for the products",
 )
 
 app.add_middleware(
@@ -20,33 +19,21 @@ app.add_middleware(
     allow_headers=["*"],  
 )
 
+# Mount the entire front_end folder as static files
+# This makes all your HTML, CSS, JS, images accessible
+app.mount("/static", StaticFiles(directory="front_end"), name="static")
 
+# Serve index.html at the root URL
+@app.get("/")
+async def read_index():
+    return FileResponse('front_end/index.html')
 
-
-
-@app.get("/", response_class=HTMLResponse)
-async def root():
-    return """
-    <html>
-    <head><title>Product Management System</title></head>
-    <body style="font-family: Arial; text-align: center; padding: 50px;">
-        <h1>🚀 Product Management System</h1>
-        <p>Welcome to the Product Management API</p>
-        <a href="/docs" style="padding: 10px 20px; background: blue; color: white; text-decoration: none; border-radius: 5px;">View API Documentation</a>
-    </body>
-    </html>
-    """
-
-
+# Include your API routers
 app.include_router(product_route.router)
-
 app.include_router(seller_route.router)
-
 app.include_router(signin.router)
 
 models.Base.metadata.create_all(engine)
-
-
 
 
 
