@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from apis import models
 from apis.db import engine
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import product_route, seller_route, signin
+from routers import product_route, seller_route, signin
 
 app = FastAPI(
     title="Products",
